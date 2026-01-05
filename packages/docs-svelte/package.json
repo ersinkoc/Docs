@@ -20,8 +20,8 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "test": "vitest",
-    "test:coverage": "vitest --coverage",
+    "test": "vitest --run",
+    "test:coverage": "vitest --coverage --run",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
@@ -33,7 +33,6 @@
     "@types/node": "^20.0.0",
     "svelte": "^4.2.0",
     "tsup": "^8.0.0",
-    "typescript": "^5.0.0",
-    "vitest": "^2.0.0"
+    "typescript": "^5.0.0"
   }
 }

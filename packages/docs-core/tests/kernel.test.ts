@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { Kernel } from "../src/kernel.js";
+import { Kernel, PluginAPI } from "../src/kernel.js";
 import type { DocsPlugin, DocsConfig } from "../src/types.js";
 
 describe("Kernel", () => {
@@ -159,6 +159,16 @@ describe("Kernel", () => {
 
       expect(callback).toHaveBeenCalledWith(config);
     });
+
+    it("should not register listener when destroyed", async () => {
+      await kernel.destroy();
+
+      const callback = vi.fn();
+      kernel.on("onBuildStart", callback);
+      kernel.emit("onBuildStart");
+
+      expect(callback).not.toHaveBeenCalled();
+    });
   });
 
   describe("emit()", () => {
@@ -297,6 +307,98 @@ describe("Kernel", () => {
       await kernel.destroy();
 
       expect(kernel.listPlugins()).toEqual([]);
+    });
+
+    it("should handle onDestroy error", async () => {
+      kernel.use({
+        name: "error-plugin",
+        version: "1.0.0",
+        onDestroy: async () => {
+          throw new Error("Destroy error");
+        },
+      });
+
+      // Should not throw
+      await kernel.destroy();
+      expect(kernel.listPlugins()).toEqual([]);
+    });
+
+    it("should skip undefined plugin names", async () => {
+      kernel.use({ name: "valid-plugin", version: "1.0.0" });
+      // Add undefined to pluginOrder to test the skip
+      kernel["pluginOrder"].push(undefined as unknown as string);
+
+      // Should not throw
+      await kernel.destroy();
+      expect(kernel.listPlugins()).toEqual([]);
+    });
+
+    it("should skip null plugin names", async () => {
+      kernel.use({ name: "valid-plugin", version: "1.0.0" });
+      // Add null to pluginOrder to test the skip
+      kernel["pluginOrder"].push(null as unknown as string);
+
+      // Should not throw
+      await kernel.destroy();
+      expect(kernel.listPlugins()).toEqual([]);
+    });
+  });
+
+  describe("runWithErrorBoundaryAsync", () => {
+    it("should return non-Promise result directly", async () => {
+      const result = kernel.runWithErrorBoundaryAsync(() => "sync-result");
+      expect(await result).toBe("sync-result");
+    });
+
+    it("should await Promise result", async () => {
+      const result = kernel.runWithErrorBoundaryAsync(async () => "async-result");
+      expect(await result).toBe("async-result");
+    });
+  });
+
+  describe("Kernel.plugins", () => {
+    describe("markdown()", () => {
+      it("should create markdown transformer plugin", () => {
+        const transformer = async (ast: MarkdownAST) => ast;
+        const plugin = PluginAPI.markdown(transformer);
+
+        expect(plugin.name).toBe("markdown-transformer");
+        expect(plugin.version).toBe("1.0.0");
+        expect(typeof plugin.onMarkdownParse).toBe("function");
+      });
+    });
+
+    describe("html()", () => {
+      it("should create HTML transformer plugin", () => {
+        const transformer = async (html: string) => html;
+        const plugin = PluginAPI.html(transformer);
+
+        expect(plugin.name).toBe("html-transformer");
+        expect(plugin.version).toBe("1.0.0");
+        expect(typeof plugin.onHtmlRender).toBe("function");
+      });
+    });
+
+    describe("content()", () => {
+      it("should create content processor plugin", () => {
+        const processor = async (files: ContentFile[]) => files;
+        const plugin = PluginAPI.content(processor);
+
+        expect(plugin.name).toBe("content-processor");
+        expect(plugin.version).toBe("1.0.0");
+        expect(typeof plugin.onContentLoad).toBe("function");
+      });
+    });
+
+    describe("config()", () => {
+      it("should create config modifier plugin", () => {
+        const modifier = (config: DocsConfig) => config;
+        const plugin = PluginAPI.config(modifier);
+
+        expect(plugin.name).toBe("config-modifier");
+        expect(plugin.version).toBe("1.0.0");
+        expect(typeof plugin.onConfig).toBe("function");
+      });
     });
   });
 });

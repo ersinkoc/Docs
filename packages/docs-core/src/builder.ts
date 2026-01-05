@@ -372,7 +372,9 @@ export class Builder {
       filename = filename + ".html";
     }
 
-    const outputPath = join(outDir, filename.slice(1));
+    // Remove leading slash if present
+    const filePath = filename.startsWith("/") ? filename.slice(1) : filename;
+    const outputPath = join(outDir, filePath);
     const dir = dirname(outputPath);
 
     if (!existsSync(dir)) {
