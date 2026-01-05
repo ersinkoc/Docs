@@ -1,0 +1,39 @@
+{
+  "name": "@oxog/docs-svelte",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Svelte adapter for @oxog/docs",
+  "license": "MIT",
+  "author": "Ersin Koç (@ersinkoc)",
+  "repository": "https://github.com/ersinkoc/docs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@oxog/docs-core": "workspace:*",
+    "svelte": ">=4.0.0"
+  },
+  "devDependencies": {
+    "@oxog/docs-core": "workspace:*",
+    "@types/node": "^20.0.0",
+    "svelte": "^4.2.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0"
+  }
+}

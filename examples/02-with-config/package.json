@@ -1,0 +1,13 @@
+{
+  "name": "example-with-config",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npx @oxog/docs dev",
+    "build": "npx @oxog/docs build",
+    "preview": "npx @oxog/docs preview"
+  },
+  "dependencies": {
+    "@oxog/docs": "workspace:*"
+  }
+}

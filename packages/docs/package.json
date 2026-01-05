@@ -1,0 +1,42 @@
+{
+  "name": "@oxog/docs",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Framework-agnostic documentation generator CLI",
+  "license": "MIT",
+  "author": "Ersin Koç (@ersinkoc)",
+  "repository": "https://github.com/ersinkoc/docs",
+  "bin": {
+    "docs": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@oxog/docs-core": "workspace:*",
+    "@oxog/docs-theme-default": "workspace:*",
+    "@oxog/docs-vanilla": "workspace:*",
+    "commander": "^12.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0"
+  }
+}

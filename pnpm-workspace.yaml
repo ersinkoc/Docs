@@ -1,0 +1,6 @@
+link-workspace-packages: true
+
+packages:
+  - "packages/*"
+  - "website"
+  - "examples/*"

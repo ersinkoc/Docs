@@ -1,0 +1,16 @@
+{
+  "name": "example-react",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npx @oxog/docs dev",
+    "build": "npx @oxog/docs build",
+    "preview": "npx @oxog/docs preview"
+  },
+  "dependencies": {
+    "@oxog/docs": "workspace:*",
+    "@oxog/docs-react": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}

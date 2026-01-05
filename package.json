@@ -1,0 +1,31 @@
+{
+  "name": "@oxog/docs-monorepo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "test:coverage": "pnpm -r test:coverage",
+    "dev": "pnpm --filter @oxog/docs dev",
+    "lint": "eslint packages/docs-core/src packages/docs-react/src packages/docs-vue/src packages/docs-svelte/src packages/docs-solid/src packages/docs-vanilla/src packages/docs-theme-default/src packages/docs/src",
+    "format": "prettier --write .",
+    "typecheck": "pnpm -r typecheck",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm build && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.0.0",
+    "@eslint/js": "^9.39.2",
+    "@vitest/coverage-v8": "^4.0.16",
+    "eslint": "^9.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.51.0",
+    "vitest": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=9"
+  }
+}

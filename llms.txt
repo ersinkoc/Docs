@@ -1,0 +1,75 @@
+# @oxog/docs
+
+> Framework-agnostic documentation generator
+
+## Install
+
+```bash
+npm install @oxog/docs
+```
+
+## Quick Start
+
+```bash
+npx @oxog/docs init
+npx @oxog/docs dev
+```
+
+## Config (docs.config.js)
+
+```javascript
+import { defineConfig } from '@oxog/docs'
+import react from '@oxog/docs-react'
+
+export default defineConfig({
+  title: 'My Docs',
+  adapter: react()
+})
+```
+
+## Adapters
+
+- `@oxog/docs-react` - React SSG
+- `@oxog/docs-vue` - Vue SSG
+- `@oxog/docs-svelte` - Svelte SSG
+- `@oxog/docs-solid` - Solid SSG
+- `@oxog/docs-vanilla` - Plain HTML / Web Components
+
+## CLI
+
+- `init` - Create new docs project
+- `dev` - Start dev server
+- `build` - Production build
+- `preview` - Preview build
+- `new <path>` - Create page
+
+## Plugins
+
+### Core (auto-loaded)
+- markdown, frontmatter, routing, assets, codeshine
+
+### Optional
+- `search()` - Full-text search
+- `sitemap()` - Sitemap generation
+- `rss()` - RSS feed
+- `i18n()` - Multi-language
+- `analytics()` - Analytics
+- `mermaid()` - Diagrams
+- `toc()` - Table of contents
+
+## Plugin API
+
+```typescript
+{
+  name: string,
+  onConfig?: (config) => config,
+  onMarkdownParse?: (ast, file) => ast,
+  onBuildEnd?: (manifest) => void
+}
+```
+
+## Links
+
+- Docs: https://docs.oxog.dev
+- GitHub: https://github.com/ersinkoc/docs
+- NPM: https://npmjs.com/package/@oxog/docs
