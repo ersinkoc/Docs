@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "pnpm -r build",
-    "test": "pnpm -r test",
+    "test": "pnpm -r test --no-bail",
     "test:coverage": "pnpm -r test:coverage",
     "dev": "pnpm --filter @oxog/docs dev",
     "lint": "eslint packages/docs-core/src packages/docs-react/src packages/docs-vue/src packages/docs-svelte/src packages/docs-solid/src packages/docs-vanilla/src packages/docs-theme-default/src packages/docs/src",

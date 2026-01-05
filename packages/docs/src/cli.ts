@@ -3,6 +3,7 @@
  * @oxog/docs - CLI Entry Point
  */
 
+import { fileURLToPath } from "node:url";
 import { Command } from "commander";
 import { init } from "./commands/init.js";
 import { dev } from "./commands/dev.js";
@@ -121,10 +122,11 @@ program
     }
   });
 
-// Parse arguments
-program.parse();
-
-// Show help if no command provided
-if (process.argv.length <= 2) {
-  program.outputHelp();
+// Only parse when this file is run directly (not imported)
+const isMainModule = process.argv[1] === fileURLToPath(import.meta.url);
+if (isMainModule) {
+  program.parse();
+  if (process.argv.length <= 2) {
+    program.outputHelp();
+  }
 }

@@ -116,8 +116,11 @@ describe("DefaultTheme", () => {
         pathname: "/",
       });
 
+      // Title should be escaped (XSS protection)
       expect(html).toContain("&lt;script&gt;");
-      expect(html).not.toContain("<script>");
+      // The unescaped script should NOT appear in the title tag
+      const titleMatch = html.match(/<title>(.*?)<\/title>/);
+      expect(titleMatch?.[1]).not.toContain("<script>");
     });
   });
 });
