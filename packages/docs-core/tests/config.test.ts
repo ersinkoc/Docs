@@ -25,6 +25,25 @@ describe("ConfigLoader", () => {
 
       expect(path).toBeUndefined();
     });
+
+    it("should return path when config file exists", () => {
+      // Create actual temp directory with config file
+      const { join } = require("node:path");
+      const { mkdirSync, writeFileSync, rmSync, existsSync } = require("node:fs");
+      const testDir = join(__dirname, "test-detect-config");
+      const configPath = join(testDir, "docs.config.ts");
+
+      try {
+        mkdirSync(testDir, { recursive: true });
+        writeFileSync(configPath, "export default {};");
+
+        const path = loader.detectConfigPath(testDir);
+
+        expect(path).toBe(configPath);
+      } finally {
+        rmSync(testDir, { recursive: true, force: true });
+      }
+    });
   });
 
   describe("load()", () => {
@@ -32,6 +51,14 @@ describe("ConfigLoader", () => {
       await expect(loader.load("/test.json")).rejects.toThrow(
         "Unsupported config file extension: .json",
       );
+    });
+
+    it("should return empty object when no config path found", async () => {
+      vi.spyOn(loader as unknown as { detectConfigPath: () => undefined }, "detectConfigPath").mockReturnValue(undefined);
+
+      const result = await loader.load();
+
+      expect(result).toEqual({});
     });
   });
 
@@ -258,6 +285,39 @@ describe("ConfigLoader", () => {
         await expect(loader.loadAndResolve(configPath, __dirname)).rejects.toThrow(
           "Configuration validation failed",
         );
+      } finally {
+        rmSync(testDir, { recursive: true, force: true });
+      }
+    });
+
+    it("should successfully load and resolve valid config", async () => {
+      const { join } = require("node:path");
+      const { mkdirSync, writeFileSync, rmSync } = require("node:fs");
+      const testDir = join(__dirname, "test-valid-config");
+      const configPath = join(testDir, "docs.config.ts");
+
+      try {
+        mkdirSync(testDir, { recursive: true });
+        // Valid config with all required fields
+        writeFileSync(
+          configPath,
+          `export default {
+  title: "My Docs",
+  adapter: {
+    name: "vanilla",
+    createRenderer: () => ({ render: () => "" }),
+    transformHtml: (html) => html,
+    hydrate: () => {}
+  }
+};`,
+        );
+
+        const config = await loader.loadAndResolve(configPath, __dirname);
+
+        // Validation passes and config is returned
+        expect(config.title).toBe("My Docs");
+        expect(config.adapter).toBeDefined();
+        expect(config.srcDir).toBe("docs"); // default
       } finally {
         rmSync(testDir, { recursive: true, force: true });
       }

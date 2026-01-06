@@ -82,6 +82,51 @@ describe("Router", () => {
     });
   });
 
+  describe("extractFrontmatter()", () => {
+    it("should extract frontmatter from file content", async () => {
+      const { join } = require("node:path");
+      const { mkdirSync, writeFileSync, rmSync } = require("node:fs");
+      const testDir = join(__dirname, "test-frontmatter-router");
+      const testFile = join(testDir, "test.md");
+
+      try {
+        mkdirSync(testDir, { recursive: true });
+        const content = `---\ntitle: Test Page\ndescription: A test\n---\n# Content here`;
+
+        writeFileSync(testFile, content);
+
+        const result = await router["extractFrontmatter"](testFile);
+
+        expect(result.metadata.title).toBe("Test Page");
+        expect(result.metadata.description).toBe("A test");
+        expect(result.content).toContain("# Content here");
+      } finally {
+        rmSync(testDir, { recursive: true, force: true });
+      }
+    });
+
+    it("should handle file without frontmatter", async () => {
+      const { join } = require("node:path");
+      const { mkdirSync, writeFileSync, rmSync } = require("node:fs");
+      const testDir = join(__dirname, "test-no-frontmatter-router");
+      const testFile = join(testDir, "test.md");
+
+      try {
+        mkdirSync(testDir, { recursive: true });
+        const content = `# Just content\nNo frontmatter here`;
+
+        writeFileSync(testFile, content);
+
+        const result = await router["extractFrontmatter"](testFile);
+
+        expect(result.metadata).toEqual({});
+        expect(result.content).toBe(content);
+      } finally {
+        rmSync(testDir, { recursive: true, force: true });
+      }
+    });
+  });
+
   describe("parseFrontmatter()", () => {
     it("should parse simple key-value pairs", () => {
       const yaml = `title: Test Title
@@ -512,6 +557,18 @@ numbers: [1, 2, 3]`;
       // Route with order should come first, then the one with Infinity
       expect(section.items[0].link).toBe("/test/a/");
       expect(section.items[1].link).toBe("/test/b/");
+    });
+
+    it("should handle empty routes array", () => {
+      const routes: Route[] = [];
+
+      const section = router["buildSection"](routes);
+
+      // Should return section with defaults for empty routes
+      expect(section.path).toBe("/");
+      expect(section.text).toBe("");
+      expect(section.frontmatter).toEqual({});
+      expect(section.items).toHaveLength(0);
     });
   });
 

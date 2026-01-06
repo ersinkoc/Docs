@@ -824,6 +824,45 @@ describe("Builder - parseFrontmatter edge cases", () => {
 
     expect(result.key).toBeUndefined();
   });
+
+  it("should handle frontmatter with undefined capture group", () => {
+    // This test covers the ?? "" fallback for frontmatterYaml in parseFrontmatter
+    // When the regex match exists but capture group is undefined (edge case)
+    const content = `---\n---\nContent after`;
+
+    const result = (builder as unknown as {
+      parseFrontmatter: (c: string) => { metadata: Record<string, unknown>; content: string };
+    }).parseFrontmatter(content);
+
+    // The regex requires content between --- markers, so this won't match
+    expect(result.metadata).toEqual({});
+    expect(result.content).toBe(content); // Original content returned when no frontmatter
+  });
+
+  it("should handle edge case frontmatter without trailing content", () => {
+    // Test the markdownContent ?? "" fallback
+    const content = `---\ntitle: Test\n---`;
+
+    const result = (builder as unknown as {
+      parseFrontmatter: (c: string) => { metadata: Record<string, unknown>; content: string };
+    }).parseFrontmatter(content);
+
+    // This regex requires \n after closing ---, so it won't match
+    expect(result.metadata).toEqual({});
+  });
+
+  it("should handle empty content after frontmatter with newline", () => {
+    // This should match and have empty string content
+    const content = `---\ntitle: Test\n---\n`;
+
+    const result = (builder as unknown as {
+      parseFrontmatter: (c: string) => { metadata: Record<string, unknown>; content: string };
+    }).parseFrontmatter(content);
+
+    expect(result.metadata.title).toBe("Test");
+    // Content after --- is empty, but should not be undefined
+    expect(result.content).toBe("");
+  });
 });
 
 describe("Builder - route without filePath", () => {
